@@ -6,6 +6,7 @@
 
 .c{
   background: aliceblue;
-  height: 90vh;
-
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
 }

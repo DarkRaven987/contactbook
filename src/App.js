@@ -1,41 +1,50 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+
+import {createContact, editContact, deleteContact} from './store/actions';
+
 class App extends Component {
 
   constructor(props){
     super(props);
 
     this.state = {
-        contacts: [
-            {id: 1, number: '098-701-80-61', firstName: 'Oleh', secondName: 'Tsibulskyi', company:  '-',email: 'oleg123@gmail.com', avatar: '...'},
-            {id: 2, number: '098-702-85-58', firstName: 'Alena', secondName: 'Gorovaya', company:  'IT-corp',email: 'alena1989@gmail.com', avatar: '...'},
-            {id: 3, number: '098-345-67-33', firstName: 'Max', secondName: 'Mad', company:  'Gamedev 9x',email: 'madmax9000@gmail.com', avatar: '...'}
-        ]
+
     }
   }
 
   render() {
-    const {contacts} = this.state;
+    const {contacts} = this.props;
     return (
       <div className="App">
         <div className="ui container">
           <div className="ui menu">
+              <div className="ui item">Contact book</div>
+              <div className="ui item right">About us</div>
           </div>
-          <div>
-            <div className="inputMenu"></div>
-            <div className=" c ui segment ">
+          <div className="c ui five column grid segment">
               {contacts.map((el) => {
                 return(
-                    <div key={el.id} className='ui segment' onClick={() => console.log(el.id)}>
-                      <div>
-                        {`${el.number} ${el.firstName} ${el.secondName} ${el.company} ${el.email} `}
-                      </div>
-                      <div className="ui fitted divider"></div>
+                    <div className="column">
+                        <div className="ui card">
+                            <div className="image">
+                                <img src={el.avatar}/>
+                            </div>
+                            <div className="content">
+                                <a className="header">{`${el.firstName} ${el.secondName}`}</a>
+                                <div className="description">
+                                    <p>Number: {el.number}</p>
+                                    <p>Company: {el.company}</p>
+                                    <p>E-mail: {el.email}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 );
               })}
-            </div>
           </div>
         </div>
       </div>
@@ -43,4 +52,18 @@ class App extends Component {
   }
 }
 
-export default App;
+const putStateToProps = (state) => {
+    return{
+        contacts: state.contacts
+    }
+};
+
+const putActionsToProps = (dispatch) => {
+    return {
+        createContact: bindActionCreators(createContact, dispatch),
+        editContact: bindActionCreators(editContact, dispatch),
+        deleteContact: bindActionCreators(deleteContact, dispatch),
+    }
+};
+
+export default connect(putStateToProps, putActionsToProps)(App);
