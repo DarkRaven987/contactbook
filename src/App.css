@@ -1,0 +1,11 @@
+.App{
+  height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(to right, rgb(131, 96, 195), rgb(46, 191, 145));
+}
+
+.c{
+  background: aliceblue;
+  height: 90vh;
+
+}
