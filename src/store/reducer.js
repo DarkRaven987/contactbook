@@ -18,6 +18,10 @@ export const reducer = (state = initialState, action) => {
             return state;
         case 'DELETE_CONTACT':
             return state;
+        case 'CHANGE_EDIT_MODE':
+            return {
+                ...state, editMode: action.payload
+            }
         default:
             return state;
     }
