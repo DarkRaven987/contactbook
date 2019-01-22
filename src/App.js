@@ -3,7 +3,7 @@ import './App.css';
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
-import {createContact, editContact, deleteContact} from './store/actions';
+import {createContact, editContact, deleteContact, changeEditMode} from './store/actions';
 
 class App extends Component {
 
@@ -16,8 +16,9 @@ class App extends Component {
   }
 
   render() {
-    const {contacts} = this.props;
+    const {contacts, createContact, changeEditMode, editMode} = this.props;
     let newContact = {...this.state.newContact};
+    console.log(editMode);
     return (
       <div className="App">
             <div className="ui container">
@@ -77,13 +78,26 @@ class App extends Component {
                                 </div>
                             </div>
                         </div>
-                        <button className="ui inverted button big blue"
-                                onClick={async() => {
-                                    console.log(this.state);
-                                    newContact.id = contacts[contacts.length-1].id+1;
-                                    await this.setState({newContact: newContact});
-                                    console.log(this.state);
-                                }}>Create</button>
+                        {editMode?
+                            <div>
+                                <button className="ui inverted button big blue"
+                                        onClick={async() => {
+                                            changeEditMode(!editMode);
+                                        }}>Save</button>
+                                <button className="ui inverted secondary big button"
+                                        onClick={async() => {
+                                            changeEditMode(!editMode);
+                                        }}>Cancel</button>
+                            </div>
+
+                            :
+                            <button className="ui inverted button big green"
+                                                 onClick={async() => {
+                                                     newContact.id = contacts[contacts.length-1].id+1;
+                                                     await this.setState({newContact: newContact});
+                                                     createContact(this.state.newContact);
+                                                     console.log(contacts);
+                                                 }}>Create</button> }
                     </div>
 
                         <div className="outputMenu">
@@ -98,9 +112,16 @@ class App extends Component {
                                                 <a className="header">{`${el.firstName} ${el.secondName}`}</a>
                                                 <div className="description">
                                                     <p className='ui text'>Number: {el.number}</p>
-                                                    <p>Company: {el.company}</p>
-                                                    <p>E-mail: {el.email}</p>
+                                                    <p className='ui text'>Company: {el.company}</p>
+                                                    <p className='ui text'>E-mail: {el.email}</p>
                                                 </div>
+                                            </div>
+                                            <div className="ui buttons">
+                                                <button className="ui button blue inverted"
+                                                    onClick={() => {changeEditMode(!editMode)}}
+                                                ><i className="icon edit outline"></i></button>
+                                                <div className="or"></div>
+                                                <button className="ui button red inverted"><i className="icon trash alternate outline"></i></button>
                                             </div>
                                         </div>
                                     );
@@ -117,12 +138,14 @@ class App extends Component {
 
 const putStateToProps = (state) => {
     return{
-        contacts: state.contacts
+        contacts: state.contacts,
+        editMode: state.editMode
     }
 };
 
 const putActionsToProps = (dispatch) => {
     return {
+        changeEditMode: bindActionCreators(changeEditMode, dispatch),
         createContact: bindActionCreators(createContact, dispatch),
         editContact: bindActionCreators(editContact, dispatch),
         deleteContact: bindActionCreators(deleteContact, dispatch),
