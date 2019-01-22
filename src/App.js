@@ -11,18 +11,18 @@ class App extends Component {
     super(props);
 
     this.state = {
-        newContact: {id: 0, number: '', firstName: '', secondName: '', company:  '',email: '', avatar: ""},
-
+        newContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""}
     }
   }
 
   render() {
     const {contacts} = this.props;
+    let newContact = {...this.state.newContact};
     return (
       <div className="App">
             <div className="ui container">
                 <div className="ui icon labeled menu">
-                      <div className="item"><i className="icon phone square"></i>Contact book</div>
+                      <div className="item"><i className="icon phone square"/>Contact book</div>
                 </div>
 
                 <div className="ui segment">
@@ -31,41 +31,59 @@ class App extends Component {
                             <div className="field column">
                                 <label>Name</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Name"/>
+                                    <input type="text" placeholder="Name"
+                                           onChange={(e) => {newContact.firstName = e.target.value;}
+                                           }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Surname</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Surname"/>
+                                    <input type="text" placeholder="Surname"
+                                           onChange={(e) => {newContact.secondName = e.target.value;}
+                                           }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Contact number</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Number"/>
+                                    <input type="text" placeholder="Contact number"
+                                           onChange={(e) => {newContact.number = e.target.value;}
+                                           }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>E-mail</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="E-mail"/>
+                                    <input type="text" placeholder="E-mail"
+                                           onChange={(e) => {newContact.email = e.target.value;}
+                                           }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Company</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Company"/>
+                                    <input type="text" placeholder="Company"
+                                           onChange={(e) => {newContact.company = e.target.value;}
+                                           }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Avatar</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Image URL"/>
+                                    <input type="text" placeholder="URL-address"
+                                           onChange={(e) => {newContact.avatar = e.target.value;}
+                                           }/>
                                 </div>
                             </div>
                         </div>
-                        <button className="ui inverted button big blue">Create</button>
+                        <button className="ui inverted button big blue"
+                                onClick={async() => {
+                                    console.log(this.state);
+                                    newContact.id = contacts[contacts.length-1].id+1;
+                                    await this.setState({newContact: newContact});
+                                    console.log(this.state);
+                                }}>Create</button>
                     </div>
 
                         <div className="outputMenu">
