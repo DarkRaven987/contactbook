@@ -3,10 +3,6 @@
   overflow-y: auto;
   background: linear-gradient(to right, rgb(131, 96, 195), rgb(46, 191, 145));
 }
-
-.c{
-  background: aliceblue;
-  height: auto;
-  display: flex;
-  flex-wrap: wrap;
+.image{
+  border-radius: 100%;
 }
