@@ -11,19 +11,20 @@ class App extends Component {
     super(props);
 
     this.state = {
-        newContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""}
+        newContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""},
+        editedContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""},
     }
   }
 
   render() {
-    const {contacts, createContact, changeEditMode, editMode} = this.props;
+    const {contacts, createContact, changeEditMode, editMode, deleteContact} = this.props;
     let newContact = {...this.state.newContact};
     console.log(editMode);
     return (
       <div className="App">
             <div className="ui container">
                 <div className="ui icon labeled menu">
-                      <div className="item"><i className="icon phone square"/>Contact book</div>
+                      <div className="item" onClick={() => {console.log(contacts)}}><i className="icon phone square"/>Contact book</div>
                 </div>
 
                 <div className="ui segment">
@@ -81,12 +82,12 @@ class App extends Component {
                         {editMode?
                             <div>
                                 <button className="ui inverted button big blue"
-                                        onClick={async() => {
-                                            changeEditMode(!editMode);
+                                        onClick={() => {
+                                            changeEditMode(false);
                                         }}>Save</button>
                                 <button className="ui inverted secondary big button"
-                                        onClick={async() => {
-                                            changeEditMode(!editMode);
+                                        onClick={() => {
+                                            changeEditMode(false);
                                         }}>Cancel</button>
                             </div>
 
@@ -102,7 +103,7 @@ class App extends Component {
 
                         <div className="outputMenu">
                             <div className="ui four cards">
-                                {contacts.slice(0).reverse().map((el) => {
+                                {contacts.slice(0).reverse().map((el, i) => {
                                     return(
                                         <div className="ui card" key={el.id}>
                                             <div className="image">
@@ -118,10 +119,19 @@ class App extends Component {
                                             </div>
                                             <div className="ui buttons">
                                                 <button className="ui button blue inverted"
-                                                    onClick={() => {changeEditMode(!editMode)}}
+                                                    onClick={ async () => {
+                                                        changeEditMode(true);
+                                                        console.log(this.state.editedContact);
+                                                        await this.setState({editedContact: el});
+                                                        console.log(this.state.editedContact);
+                                                    }}
                                                 ><i className="icon edit outline"></i></button>
                                                 <div className="or"></div>
-                                                <button className="ui button red inverted"><i className="icon trash alternate outline"></i></button>
+                                                <button className="ui button red inverted" onClick={() => {
+                                                    deleteContact(el.id);
+                                                }}>
+                                                    <i className="icon trash alternate outline"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     );
