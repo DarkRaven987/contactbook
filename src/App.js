@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
-
-import {createContact, editContact, deleteContact, changeEditMode} from './store/actions';
 import Header from './components/Header';
 import MainBody from './components/MainBody';
 
@@ -42,4 +38,4 @@ class App extends Component {
 }
 
 
-export default connect()(App);
+export default App;
