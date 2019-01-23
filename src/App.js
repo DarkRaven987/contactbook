@@ -17,7 +17,75 @@ class App extends Component {
     }
   }
 
-  renderCardList = (arr) => {
+
+  checkNameInput = (inputs, outputs) => {
+      Array.from(outputs).forEach(el => el.style.display='none');
+      let result = false;
+      if(inputs[0].value===''){
+          outputs[0].style.display = "block";
+          result = true;
+      }
+      if (inputs[1].value===''){
+          outputs[1].style.display = "block";
+          result = true;
+      }
+      if (inputs[2].value===''){
+          outputs[2].style.display = "block";
+          result = true;
+      }else if(inputs[2].value) {
+          let num = inputs[2].value.split('-');
+          for (let i = 0; i < num.length; i++) {
+              for (let j = 0; j < num[i].length; j++) {
+                  if (num[i][j] === ' ') {
+                      outputs[3].style.display = "block";
+                      result = true;
+                  }
+              }
+          }
+          if (!result) {
+              if ((num[0].length !== 3) || (num[1].length !== 3) || (num[2].length !== 2) || (num[3].length !== 2)) {
+                  outputs[3].style.display = "block";
+                  result = true;
+              }
+          }
+      }
+      if(inputs[3].value===''){
+          outputs[4].style.display = "block";
+          result = true;
+      }else if(inputs[3].value){
+          let email = inputs[3].value.split('@');
+          if((email.length !==2)){
+              outputs[5].style.display = "block";
+              result = true;
+          }
+          if(!result){
+              let tag = email[1].split('.');
+              if(tag.length!==2){
+                  outputs[5].style.display = "block";
+                  result = true;
+              }
+          }
+      }
+      if(inputs[5].value===''){
+          outputs[6].style.display = "block";
+          result = true;
+      }
+
+
+    if(!result){
+        return result;}
+  };
+
+  clearInputs = (inputs) => {
+      inputs[0].value = '';
+      inputs[1].value = '';
+      inputs[2].value = '';
+      inputs[3].value = '';
+      inputs[4].value = '';
+      inputs[5].value = '';
+  };
+
+  renderCardList = (arr, inputs) => {
       return(
           arr.slice(0).reverse().map((el) => {
               return(
@@ -38,7 +106,6 @@ class App extends Component {
                                   onClick={  () => {
                                       this.props.changeEditMode(true);
                                       this.setState({editedContact: el});
-                                      const inputs = document.getElementsByClassName("inputField");
                                       inputs[0].value = el.firstName;
                                       inputs[1].value = el.secondName;
                                       inputs[2].value = el.number;
@@ -46,42 +113,51 @@ class App extends Component {
                                       inputs[4].value = el.company;
                                       inputs[5].value = el.avatar;
                                   }}
-                          ><i className="icon edit outline"></i></button>
-                          <div className="or"></div>
+                          ><i className="icon edit outline"/></button>
+                          <div className="or"/>
                           <button className="ui button red inverted" onClick={() => {
                               this.props.deleteContact(el.id);
                               this.setState({editedContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""}})
                           }}>
-                              <i className="icon trash alternate outline"></i>
+                              <i className="icon trash alternate outline"/>
                           </button>
                       </div>
                   </div>
               );
           })
       );
-  }
+  };
 
     render() {
-    const {contacts, createContact, deleteContact, editContact ,changeEditMode, editMode} = this.props;
-    let {editedContact, outputArray} = this.state;
-    let searchContacts=[];
-    let newContact = {...this.state.newContact};
+
+        const {contacts, createContact, editContact ,changeEditMode, editMode} = this.props;
+        let {editedContact, outputArray} = this.state;
+        let searchContacts=[];
+        let newContact = {...this.state.newContact};
+        const inputs = document.getElementsByClassName("inputField");
+        const warnings = document.getElementsByClassName("warning");
     return (
       <div className="App">
             <div className="ui container">
                 <div className="ui  menu">
-                    <div className="item" onClick={() => {console.log(contacts);console.log(this.state)}}><i className="icon phone square"/>Contact book</div>
+                    <div className="item"><i className="icon phone big square"/>Contact book</div>
                     <div className="right menu">
                         <div className="item">
                             <div className="ui transparent icon input">
-                                <input id="search" type="text" placeholder="Search..."/>
+                                <input id="search" type="text" placeholder="Search..." onChange={(e) => {
+                                    if(e.target.value===''){
+                                        searchContacts=[];
+                                        document.getElementById('search').value='';
+                                        this.setState({outputArray: searchContacts});
+                                    }
+                                }}/>
                                 <div className="icons">
-                                    <i className="ui icon close link" onClick={()=>{
+                                    <i className="ui icon close large link" onClick={()=>{
                                         searchContacts=[];
                                         document.getElementById('search').value='';
                                             this.setState({outputArray: searchContacts});
                                     }}/>
-                                    <i className="search link icon" onClick={ (e) => {
+                                    <i className="search link large icon" onClick={ (e) => {
                                         searchContacts=[];
                                         let search = document.getElementById('search').value.toLowerCase();
                                         if(search) {
@@ -92,6 +168,7 @@ class App extends Component {
                                                 }
                                             });
                                             this.setState({outputArray: searchContacts});
+                                            if(this.state.outputArray.length===0){alert("No users were found.")}
                                         }else{
                                             this.setState({outputArray: searchContacts});
                                         }
@@ -109,10 +186,15 @@ class App extends Component {
                                 <label>Name</label>
                                 <div className="ui input">
                                     <input className="inputField" type="text" placeholder="Name"
-                                           onChange={editMode?
-                                                   (e) => {editedContact.firstName = e.target.value}
-                                                   : (e) => {newContact.firstName = e.target.value}
+                                           onChange={
+                                                editMode?
+                                               (e) => {editedContact.firstName = e.target.value}
+                                               : (e) => {newContact.firstName = e.target.value}
+
                                            }/>
+                                </div>
+                                <div id='name' className="ui pointing label basic red warning" style={{display: 'none'}}>
+                                    Please enter a value
                                 </div>
                             </div>
                             <div className="field column">
@@ -124,6 +206,9 @@ class App extends Component {
                                                : (e) => {newContact.secondName = e.target.value}
                                            }/>
                                 </div>
+                                <div id='surname' className="ui pointing label basic red warning" style={{display: 'none'}}>
+                                    Please enter a value
+                                </div>
                             </div>
                             <div className="field column">
                                 <label>Contact number</label>
@@ -134,6 +219,12 @@ class App extends Component {
                                                : (e) => {newContact.number = e.target.value}
                                            }/>
                                 </div>
+                                <div id='contact' className="ui pointing label basic red warning" style={{display: 'none'}}>
+                                    Please enter a value
+                                </div>
+                                <div id='contactFormat' className="ui pointing label basic red warning" style={{display: 'none'}}>
+                                    Wrong format! Should be like this: 0XX-XXX-XX-XX
+                                </div>
                             </div>
                             <div className="field column">
                                 <label>E-mail</label>
@@ -143,6 +234,12 @@ class App extends Component {
                                                (e) => {editedContact.email = e.target.value}
                                                : (e) => {newContact.email = e.target.value}
                                            }/>
+                                </div>
+                                <div id='email' className="ui pointing label basic red warning" style={{display: 'none'}}>
+                                    Please enter a value
+                                </div>
+                                <div id='emailFormat' className="ui pointing label basic red warning" style={{display: 'none'}}>
+                                    Wrong format! Should be like this: example@email.org
                                 </div>
                             </div>
                             <div className="field column">
@@ -164,37 +261,46 @@ class App extends Component {
                                                : (e) => {newContact.avatar = e.target.value}
                                            }/>
                                 </div>
+                                <div id='avatar' className="ui pointing label basic red warning" style={{display: 'none'}}>
+                                    Please enter a value
+                                </div>
                             </div>
                         </div>
                         {editMode?
                             <div>
                                 <button className="ui inverted button big blue"
-                                        onClick={() => {
-                                            // changeEditMode(false);
-                                            editContact(editedContact);
+                                        onClick={async() => {
+                                            await changeEditMode(false);
+                                            await editContact(editedContact);
+                                            this.clearInputs(inputs);
                                         }}>Save</button>
                                 <button className="ui inverted secondary big button"
-                                        onClick={() => {
-                                            changeEditMode(false);
+                                        onClick={async() => {
+                                            await changeEditMode(false);
+                                            this.clearInputs(inputs);
                                         }}>Cancel</button>
                             </div>
 
                             :
                             <button className="ui inverted button big green"
-                                                 onClick={async() => {
-                                                     newContact.id = contacts[contacts.length-1].id+1;
-                                                     await this.setState({newContact: newContact});
-                                                     createContact(this.state.newContact);
-                                                     console.log(contacts);
-                                                 }}>Create</button> }
+                                                 onClick={async () => {
+                                                     let result = this.checkNameInput(inputs,warnings);
+                                                     if(result===false){
+                                                         newContact.id = contacts[contacts.length-1].id+1;
+                                                         await this.setState({newContact: newContact});
+                                                         await createContact(this.state.newContact);
+                                                         this.clearInputs(inputs);
+                                                     }
+                                                 }
+                                                 }>Create</button> }
                     </div>
 
                         <div className="outputMenu">
                             <div className="ui three cards">
                                 {
                                     !!outputArray.length?
-                                    this.renderCardList(outputArray):
-                                    this.renderCardList(contacts)
+                                    this.renderCardList(outputArray, inputs):
+                                    this.renderCardList(contacts, inputs)
                                 }
                             </div>
                         </div>
