@@ -1,7 +1,6 @@
 import {ACTION_CREATE_CONTACT, ACTION_EDIT_CONTACT, ACTION_DELETE_CONTACT, ACTION_CHANGE_EDIT_MODE} from "./actionConsts";
 
 export const createContact = (newValue) => {
-    console.log("Creating new contact...");
     return {
         type: ACTION_CREATE_CONTACT,
         payload: newValue
