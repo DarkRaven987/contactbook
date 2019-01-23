@@ -23,8 +23,19 @@ class App extends Component {
     return (
       <div className="App">
             <div className="ui container">
-                <div className="ui icon labeled menu">
-                      <div className="item" onClick={() => {console.log(contacts)}}><i className="icon phone square"/>Contact book</div>
+                <div className="ui  menu">
+                    <div className="item" onClick={() => {console.log(contacts)}}><i className="icon phone square"/>Contact book</div>
+                    <div className="right menu">
+                        <div className="item">
+                            <div className="ui transparent icon input">
+                                <input type="text" placeholder="Search..." onKeyDown={(e) => {
+                                    if (e.keyCode===13){
+                                    }
+                                }}/>
+                                <i className="search link icon"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="ui segment">
