@@ -102,7 +102,7 @@ class App extends Component {
 
                         <div className="outputMenu">
                             <div className="ui four cards">
-                                {contacts.map((el) => {
+                                {contacts.slice(0).reverse().map((el) => {
                                     return(
                                         <div className="ui card" key={el.id}>
                                             <div className="image">
