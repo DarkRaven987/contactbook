@@ -17,9 +17,9 @@ class App extends Component {
   }
 
   render() {
-    const {contacts, createContact, changeEditMode, editMode, deleteContact} = this.props;
+    const {contacts, createContact, deleteContact, editContact ,changeEditMode, editMode} = this.props;
+    let {editedContact} = this.state;
     let newContact = {...this.state.newContact};
-    console.log(editMode);
     return (
       <div className="App">
             <div className="ui container">
@@ -33,48 +33,60 @@ class App extends Component {
                             <div className="field column">
                                 <label>Name</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Name"
-                                           onChange={(e) => {newContact.firstName = e.target.value;}
+                                    <input className="inputField" type="text" placeholder="Name"
+                                           onChange={editMode?
+                                                   (e) => {editedContact.firstName = e.target.value}
+                                                   : (e) => {newContact.firstName = e.target.value}
                                            }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Surname</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Surname"
-                                           onChange={(e) => {newContact.secondName = e.target.value;}
+                                    <input className="inputField" type="text" placeholder="Surname"
+                                           onChange={editMode?
+                                               (e) => {editedContact.secondName = e.target.value}
+                                               : (e) => {newContact.secondName = e.target.value}
                                            }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Contact number</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Contact number"
-                                           onChange={(e) => {newContact.number = e.target.value;}
+                                    <input className="inputField" type="text" placeholder="Contact number"
+                                           onChange={editMode?
+                                               (e) => {editedContact.number = e.target.value}
+                                               : (e) => {newContact.number = e.target.value}
                                            }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>E-mail</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="E-mail"
-                                           onChange={(e) => {newContact.email = e.target.value;}
+                                    <input className="inputField" type="text" placeholder="E-mail"
+                                           onChange={editMode?
+                                               (e) => {editedContact.email = e.target.value}
+                                               : (e) => {newContact.email = e.target.value}
                                            }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Company</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="Company"
-                                           onChange={(e) => {newContact.company = e.target.value;}
+                                    <input className="inputField" type="text" placeholder="Company"
+                                           onChange={editMode?
+                                               (e) => {editedContact.company = e.target.value}
+                                               : (e) => {newContact.company = e.target.value}
                                            }/>
                                 </div>
                             </div>
                             <div className="field column">
                                 <label>Avatar</label>
                                 <div className="ui input">
-                                    <input type="text" placeholder="URL-address"
-                                           onChange={(e) => {newContact.avatar = e.target.value;}
+                                    <input className="inputField" type="text" placeholder="URL-address"
+                                           onChange={editMode?
+                                               (e) => {editedContact.avatar = e.target.value}
+                                               : (e) => {newContact.avatar = e.target.value}
                                            }/>
                                 </div>
                             </div>
@@ -83,7 +95,8 @@ class App extends Component {
                             <div>
                                 <button className="ui inverted button big blue"
                                         onClick={() => {
-                                            changeEditMode(false);
+                                            // changeEditMode(false);
+                                            editContact(editedContact);
                                         }}>Save</button>
                                 <button className="ui inverted secondary big button"
                                         onClick={() => {
@@ -102,8 +115,8 @@ class App extends Component {
                     </div>
 
                         <div className="outputMenu">
-                            <div className="ui four cards">
-                                {contacts.slice(0).reverse().map((el, i) => {
+                            <div className="ui three cards">
+                                {contacts.slice(0).reverse().map((el) => {
                                     return(
                                         <div className="ui card" key={el.id}>
                                             <div className="image">
@@ -119,16 +132,22 @@ class App extends Component {
                                             </div>
                                             <div className="ui buttons">
                                                 <button className="ui button blue inverted"
-                                                    onClick={ async () => {
+                                                    onClick={  () => {
                                                         changeEditMode(true);
-                                                        console.log(this.state.editedContact);
-                                                        await this.setState({editedContact: el});
-                                                        console.log(this.state.editedContact);
+                                                        this.setState({editedContact: el});
+                                                        const inputs = document.getElementsByClassName("inputField");
+                                                        inputs[0].value = el.firstName;
+                                                        inputs[1].value = el.secondName;
+                                                        inputs[2].value = el.number;
+                                                        inputs[3].value = el.email;
+                                                        inputs[4].value = el.company;
+                                                        inputs[5].value = el.avatar;
                                                     }}
                                                 ><i className="icon edit outline"></i></button>
                                                 <div className="or"></div>
                                                 <button className="ui button red inverted" onClick={() => {
                                                     deleteContact(el.id);
+                                                    this.setState({editedContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""}})
                                                 }}>
                                                     <i className="icon trash alternate outline"></i>
                                                 </button>
