@@ -13,26 +13,90 @@ class App extends Component {
     this.state = {
         newContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""},
         editedContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""},
+        outputArray: [],
     }
   }
 
-  render() {
+  renderCardList = (arr) => {
+      return(
+          arr.slice(0).reverse().map((el) => {
+              return(
+                  <div className="ui card" key={el.id}>
+                      <div className="image">
+                          <img src={el.avatar} alt="/"/>
+                      </div>
+                      <div className="content">
+                          <a className="header">{`${el.firstName} ${el.secondName}`}</a>
+                          <div className="description">
+                              <p className='ui text'>Number: {el.number}</p>
+                              <p className='ui text'>Company: {el.company}</p>
+                              <p className='ui text'>E-mail: {el.email}</p>
+                          </div>
+                      </div>
+                      <div className="ui buttons">
+                          <button className="ui button blue inverted"
+                                  onClick={  () => {
+                                      this.props.changeEditMode(true);
+                                      this.setState({editedContact: el});
+                                      const inputs = document.getElementsByClassName("inputField");
+                                      inputs[0].value = el.firstName;
+                                      inputs[1].value = el.secondName;
+                                      inputs[2].value = el.number;
+                                      inputs[3].value = el.email;
+                                      inputs[4].value = el.company;
+                                      inputs[5].value = el.avatar;
+                                  }}
+                          ><i className="icon edit outline"></i></button>
+                          <div className="or"></div>
+                          <button className="ui button red inverted" onClick={() => {
+                              this.props.deleteContact(el.id);
+                              this.setState({editedContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""}})
+                          }}>
+                              <i className="icon trash alternate outline"></i>
+                          </button>
+                      </div>
+                  </div>
+              );
+          })
+      );
+  }
+
+    render() {
     const {contacts, createContact, deleteContact, editContact ,changeEditMode, editMode} = this.props;
-    let {editedContact} = this.state;
+    let {editedContact, outputArray} = this.state;
+    let searchContacts=[];
     let newContact = {...this.state.newContact};
     return (
       <div className="App">
             <div className="ui container">
                 <div className="ui  menu">
-                    <div className="item" onClick={() => {console.log(contacts)}}><i className="icon phone square"/>Contact book</div>
+                    <div className="item" onClick={() => {console.log(contacts);console.log(this.state)}}><i className="icon phone square"/>Contact book</div>
                     <div className="right menu">
                         <div className="item">
                             <div className="ui transparent icon input">
-                                <input type="text" placeholder="Search..." onKeyDown={(e) => {
-                                    if (e.keyCode===13){
-                                    }
-                                }}/>
-                                <i className="search link icon"></i>
+                                <input id="search" type="text" placeholder="Search..."/>
+                                <div className="icons">
+                                    <i className="ui icon close link" onClick={()=>{
+                                        searchContacts=[];
+                                        document.getElementById('search').value='';
+                                            this.setState({outputArray: searchContacts});
+                                    }}/>
+                                    <i className="search link icon" onClick={ (e) => {
+                                        searchContacts=[];
+                                        let search = document.getElementById('search').value.toLowerCase();
+                                        if(search) {
+                                            contacts.map((el) => {
+                                                let fullName = `${el.firstName} ${el.secondName}`.toLowerCase();
+                                                if (fullName.indexOf(search) > -1) {
+                                                    searchContacts.push(el);
+                                                }
+                                            });
+                                            this.setState({outputArray: searchContacts});
+                                        }else{
+                                            this.setState({outputArray: searchContacts});
+                                        }
+                                    }}/>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -127,45 +191,11 @@ class App extends Component {
 
                         <div className="outputMenu">
                             <div className="ui three cards">
-                                {contacts.slice(0).reverse().map((el) => {
-                                    return(
-                                        <div className="ui card" key={el.id}>
-                                            <div className="image">
-                                                <img src={el.avatar} alt="/"/>
-                                            </div>
-                                            <div className="content">
-                                                <a className="header">{`${el.firstName} ${el.secondName}`}</a>
-                                                <div className="description">
-                                                    <p className='ui text'>Number: {el.number}</p>
-                                                    <p className='ui text'>Company: {el.company}</p>
-                                                    <p className='ui text'>E-mail: {el.email}</p>
-                                                </div>
-                                            </div>
-                                            <div className="ui buttons">
-                                                <button className="ui button blue inverted"
-                                                    onClick={  () => {
-                                                        changeEditMode(true);
-                                                        this.setState({editedContact: el});
-                                                        const inputs = document.getElementsByClassName("inputField");
-                                                        inputs[0].value = el.firstName;
-                                                        inputs[1].value = el.secondName;
-                                                        inputs[2].value = el.number;
-                                                        inputs[3].value = el.email;
-                                                        inputs[4].value = el.company;
-                                                        inputs[5].value = el.avatar;
-                                                    }}
-                                                ><i className="icon edit outline"></i></button>
-                                                <div className="or"></div>
-                                                <button className="ui button red inverted" onClick={() => {
-                                                    deleteContact(el.id);
-                                                    this.setState({editedContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""}})
-                                                }}>
-                                                    <i className="icon trash alternate outline"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                {
+                                    !!outputArray.length?
+                                    this.renderCardList(outputArray):
+                                    this.renderCardList(contacts)
+                                }
                             </div>
                         </div>
 
