@@ -15,11 +15,12 @@ class Buttons extends React.Component {
                     <div>
                         <button className="ui inverted button big blue"
                                 onClick={async() => {
+                                    let result = checkDataInput(inputs,warnings);
+                                    if(result===false){
                                     await changeEditMode(false);
                                     await setEditedContact(editedContact);
                                     await editContact(editedContact);
-                                    clearInputs(inputs);
-                                    console.log(editedContact);
+                                    clearInputs(inputs);}
                                 }}>Save</button>
                         <button className="ui inverted secondary big button"
                                 onClick={async() => {
