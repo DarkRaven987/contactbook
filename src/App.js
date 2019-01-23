@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
 import {createContact, editContact, deleteContact, changeEditMode} from './store/actions';
+import Header from './components/Header';
 
 class App extends Component {
 
@@ -15,6 +16,10 @@ class App extends Component {
         editedContact: {id: 0, number: "", firstName: "", secondName: "", company:  "-",email: "", avatar: ""},
         outputArray: [],
     }
+  }
+
+  setOutputArray = (arr) => {
+      this.setState({outputArray: arr});
   }
 
 
@@ -132,52 +137,16 @@ class App extends Component {
 
         const {contacts, createContact, editContact ,changeEditMode, editMode} = this.props;
         let {editedContact, outputArray} = this.state;
-        let searchContacts=[];
         let newContact = {...this.state.newContact};
         const inputs = document.getElementsByClassName("inputField");
         const warnings = document.getElementsByClassName("warning");
     return (
       <div className="App">
             <div className="ui container">
-                <div className="ui  menu">
-                    <div className="item"><i className="icon phone big square"/>Contact book</div>
-                    <div className="right menu">
-                        <div className="item">
-                            <div className="ui transparent icon input">
-                                <input id="search" type="text" placeholder="Search..." onChange={(e) => {
-                                    if(e.target.value===''){
-                                        searchContacts=[];
-                                        document.getElementById('search').value='';
-                                        this.setState({outputArray: searchContacts});
-                                    }
-                                }}/>
-                                <div className="icons">
-                                    <i className="ui icon close large link" onClick={()=>{
-                                        searchContacts=[];
-                                        document.getElementById('search').value='';
-                                            this.setState({outputArray: searchContacts});
-                                    }}/>
-                                    <i className="search link large icon" onClick={ (e) => {
-                                        searchContacts=[];
-                                        let search = document.getElementById('search').value.toLowerCase();
-                                        if(search) {
-                                            contacts.map((el) => {
-                                                let fullName = `${el.firstName} ${el.secondName}`.toLowerCase();
-                                                if (fullName.indexOf(search) > -1) {
-                                                    searchContacts.push(el);
-                                                }
-                                            });
-                                            this.setState({outputArray: searchContacts});
-                                            if(this.state.outputArray.length===0){alert("No users were found.")}
-                                        }else{
-                                            this.setState({outputArray: searchContacts});
-                                        }
-                                    }}/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                <Header
+                    setOutputArray={this.setOutputArray}
+                />
 
                 <div className="ui segment">
                     <div className="inputMenu ui segment">
